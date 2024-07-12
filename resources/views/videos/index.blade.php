@@ -727,7 +727,7 @@
         .video-container {
             margin-bottom: 20px;
         }
-        .vjs-forward, .vjs-backward, .vjs-play-control, .vjs-mute-control, .vjs-volume-control {
+        .vjs-play-control, .vjs-mute-control, .vjs-volume-control {
             font-size: 20px;
             padding: 10px;
             color: white;
@@ -762,11 +762,6 @@
 <body>
     <div class="container">
         <h1 class="my-4">Video List</h1>
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
 
         <div class="row">
             @forelse($videos as $video)
@@ -780,11 +775,11 @@
                                 Your browser does not support the video tag.
                             </video>
                             <div class="mt-2">
-                                <button class="vjs-play-control btn btn-dark" data-id="my-video-{{ $video->id }}">Play</button>
-                                <button class="vjs-backward btn btn-primary" data-id="my-video-{{ $video->id }}">Backward 10s</button>
-                                <button class="vjs-forward btn btn-success" data-id="my-video-{{ $video->id }}">Forward 10s</button>
-                                <button class="vjs-mute-control btn btn-warning" data-id="my-video-{{ $video->id }}">Mute</button>
-                                <button class="vjs-volume-control btn btn-secondary" data-id="my-video-{{ $video->id }}">Volume Up</button>
+                                <button class="vjs-play-control btn btn-dark" data-id="{{ $video->id }}">Play</button>
+                                <button class="vjs-backward btn btn-primary" data-id="{{ $video->id }}">Backward 10s</button>
+                                <button class="vjs-forward btn btn-success" data-id="{{ $video->id }}">Forward 10s</button>
+                                <button class="vjs-mute-control btn btn-warning" data-id="{{ $video->id }}">Mute</button>
+                                <button class="vjs-volume-control btn btn-secondary" data-id="{{ $video->id }}">Volume Up</button>
                             </div>
                         </div>
                     </div>
@@ -817,7 +812,7 @@
                 var player{{ $video->id }} = videojs('my-video-{{ $video->id }}');
 
                 // Event listener for play/pause button
-                var playPauseBtn{{ $video->id }} = document.querySelector('.vjs-play-control[data-id="my-video-{{ $video->id }}"]');
+                var playPauseBtn{{ $video->id }} = document.querySelector('.vjs-play-control[data-id="{{ $video->id }}"]');
                 playPauseBtn{{ $video->id }}.addEventListener('click', function() {
                     if (player{{ $video->id }}.paused()) {
                         player{{ $video->id }}.play();
@@ -829,7 +824,7 @@
                 });
 
                 // Event listener for mute/unmute button
-                var muteBtn{{ $video->id }} = document.querySelector('.vjs-mute-control[data-id="my-video-{{ $video->id }}"]');
+                var muteBtn{{ $video->id }} = document.querySelector('.vjs-mute-control[data-id="{{ $video->id }}"]');
                 muteBtn{{ $video->id }}.addEventListener('click', function() {
                     if (player{{ $video->id }}.muted()) {
                         player{{ $video->id }}.muted(false);
@@ -838,6 +833,20 @@
                         player{{ $video->id }}.muted(true);
                         muteBtn{{ $video->id }}.textContent = 'Unmute';
                     }
+                });
+
+                // Event listener for backward button
+                var backwardBtn{{ $video->id }} = document.querySelector('.vjs-backward[data-id="{{ $video->id }}"]');
+                backwardBtn{{ $video->id }}.addEventListener('click', function() {
+                    var currentTime = player{{ $video->id }}.currentTime();
+                    player{{ $video->id }}.currentTime(Math.max(0, currentTime - 10)); // Go backward 10 seconds, prevent negative time
+                });
+
+                // Event listener for forward button
+                var forwardBtn{{ $video->id }} = document.querySelector('.vjs-forward[data-id="{{ $video->id }}"]');
+                forwardBtn{{ $video->id }}.addEventListener('click', function() {
+                    var currentTime = player{{ $video->id }}.currentTime();
+                    player{{ $video->id }}.currentTime(currentTime + 10); // Go forward 10 seconds
                 });
 
             @endforeach
