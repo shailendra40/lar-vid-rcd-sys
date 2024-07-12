@@ -603,14 +603,14 @@
 </html> -->
 
 
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
-    <title>Videos</title>
+    <title>Videos</title> -->
     <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> -->
     <!-- Video.js CSS -->
-    <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+    <!-- <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
     <style>
         body {
             padding: 20px;
@@ -665,17 +665,17 @@
         </div>
 
         <a href="{{ route('videos.create') }}" class="btn btn-primary mt-4">Upload or Record New Video</a>
-    </div>
+    </div> -->
 
     <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
     <!-- Video.js JS -->
-    <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+    <!-- <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Loop through each video element
+        document.addEventListener('DOMContentLoaded', function () { -->
+            <!-- // Loop through each video element
             @foreach($videos as $video)
                 var player{{ $video->id }} = videojs('my-video-{{ $video->id }}');
 
@@ -704,6 +704,120 @@
                     var playerId = this.getAttribute('data-player-id');
                     var player = videojs(playerId);
                     player.currentTime(player.currentTime() - 10);
+                });
+            @endforeach
+        });
+    </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Videos</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Video.js CSS -->
+    <link href="https://vjs.zencdn.net/7.11.4/video-js.css" rel="stylesheet" />
+    <style>
+        body {
+            padding: 20px;
+        }
+        .video-container {
+            margin-bottom: 20px;
+        }
+        .video-js {
+            width: 100%;
+            height: auto;
+        }
+        .video-controls {
+            margin-top: 10px;
+        }
+        .vjs-control-button {
+            font-size: 16px;
+            padding: 8px;
+            color: white;
+            background: #333;
+            border: none;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">Video List</h1>
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div class="row">
+            @forelse($videos as $video)
+                <div class="col-md-4 video-container">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ $video->title }}</h5>
+                            <p class="card-text">{{ $video->description }}</p>
+                            <video id="my-video-{{ $video->id }}" class="video-js vjs-default-skin" controls preload="auto" poster="{{ asset('storage/' . $video->poster_image_path) }}">
+                                <source src="{{ asset('storage/' . $video->video_path) }}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="video-controls">
+                                <button class="vjs-control-button vjs-play" data-player-id="{{ $video->id }}">Play/Pause</button>
+                                <button class="vjs-control-button vjs-forward" data-player-id="{{ $video->id }}">Forward 10s</button>
+                                <button class="vjs-control-button vjs-backward" data-player-id="{{ $video->id }}">Backward 10s</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="col-12">
+                    <div class="alert alert-warning">No videos available</div>
+                </div>
+            @endforelse
+        </div>
+
+        <a href="{{ route('videos.create') }}" class="btn btn-primary mt-4">Upload or Record New Video</a>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Video.js JS -->
+    <script src="https://vjs.zencdn.net/7.11.4/video.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Video.js for each video element
+            @foreach($videos as $video)
+                videojs('my-video-{{ $video->id }}', {}, function() {
+                    var player = this;
+
+                    // Event listener for Play/Pause button
+                    document.querySelector('.vjs-play[data-player-id="{{ $video->id }}"]').addEventListener('click', function() {
+                        if (player.paused()) {
+                            player.play();
+                            this.textContent = 'Pause';
+                        } else {
+                            player.pause();
+                            this.textContent = 'Play/Pause';
+                        }
+                    });
+
+                    // Event listener for Forward button
+                    document.querySelector('.vjs-forward[data-player-id="{{ $video->id }}"]').addEventListener('click', function() {
+                        var currentTime = player.currentTime();
+                        player.currentTime(currentTime + 10);
+                    });
+
+                    // Event listener for Backward button
+                    document.querySelector('.vjs-backward[data-player-id="{{ $video->id }}"]').addEventListener('click', function() {
+                        var currentTime = player.currentTime();
+                        player.currentTime(currentTime - 10);
+                    });
                 });
             @endforeach
         });
