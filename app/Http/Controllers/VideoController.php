@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Video;
 use Illuminate\Http\Request;
+use App\Models\Video;
 
 class VideoController extends Controller
 {
@@ -13,11 +13,18 @@ class VideoController extends Controller
         return view('videos.index', compact('videos'));
     }
 
+    public function create()
+    {
+        return view('videos.create');
+    }
+
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
-            'video' => 'required|mimes:mp4,mov,avi|max:20000',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            // 'video' => 'required|file|mimes:mp4,avi,mov|max:102400', // Limit to 100MB
+            'video' => 'required|file|mimes:mp4,avi,mov,webm|max:102400', // Limit to 100MB
         ]);
 
         $videoPath = $request->file('video')->store('videos', 'public');

@@ -10,9 +10,11 @@
     @endif
 
     <ul>
-        @foreach($videos as $video)
+        @forelse($videos as $video)
             <li>{{ $video->title }}</li>
-        @endforeach
+        @empty
+            <li>No videos available</li>
+        @endforelse
     </ul>
 
     <a href="{{ route('videos.create') }}">Upload New Video</a>

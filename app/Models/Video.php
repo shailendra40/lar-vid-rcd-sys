@@ -1,12 +1,19 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Video extends Model
 {
-    protected $fillable = ['title', 'description', 'video_path'];
+    use HasFactory;
 
-    // Your relationships or additional methods here
+    protected $table = 'vids';
+
+    protected $fillable = [
+        'title',
+        'description',
+        'video_path',
+    ];
 }
