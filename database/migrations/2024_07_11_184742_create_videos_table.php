@@ -8,7 +8,7 @@ class CreateVideosTable extends Migration
 {
     public function up()
     {
-        Schema::create('videos', function (Blueprint $table) {
+        Schema::create('vids', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
@@ -19,6 +19,6 @@ class CreateVideosTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('videos');
+        Schema::dropIfExists('vids');
     }
 }
